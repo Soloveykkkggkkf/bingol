@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIN GÖL — Сухие строительные смеси</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0d0d;
+    --yellow: #F5C800;
+    --white: #f5f3ee;
+    --gray: #1a1a1a;
+    --gray2: #2a2a2a;
+    --text-muted: #888;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 60px;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(245,200,0,0.12);
+    transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 12px 60px; }
+  .nav-logo { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: 2px; color: var(--yellow); text-decoration: none; }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--white); text-decoration: none; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7; transition: opacity 0.2s, color 0.2s; }
+  .nav-links a:hover { opacity: 1; color: var(--yellow); }
+  .nav-phone { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600; color: var(--yellow); text-decoration: none; }
+  .nav-phone:hover { opacity: 0.8; }
+
+  /* hamburger — mobile only */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(13,13,13,0.97); z-index: 99;
+    flex-direction: column; align-items: center; justify-content: center; gap: 36px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 600; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; }
+  .mobile-menu a:hover { color: var(--yellow); }
+  .mobile-menu .mob-phone { color: var(--yellow); font-size: 26px; margin-top: 16px; }
+
+  /* ── HERO ── */
+  #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding-top: 80px; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(245,200,0,0.08) 0%, transparent 70%); pointer-events: none; }
+  .hero-stripe { position: absolute; right: 0; top: 0; bottom: 0; width: 42%; background: repeating-linear-gradient(-55deg, rgba(245,200,0,0.03) 0px, rgba(245,200,0,0.03) 1px, transparent 1px, transparent 28px); pointer-events: none; }
+  .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .particle { position: absolute; background: var(--yellow); border-radius: 50%; opacity: 0; animation: float-particle var(--dur,8s) var(--delay,0s) infinite ease-in-out; }
+  @keyframes float-particle {
+    0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+    10% { opacity: 0.6; } 90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) translateX(var(--dx,40px)) scale(1.5); opacity: 0; }
+  }
+  .hero-content { position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 24px; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--yellow); opacity: 0.8; margin-bottom: 20px; animation: fadeUp 0.8s 0.2s both; }
+  .hero-title { font-family: 'Oswald', sans-serif; font-size: clamp(64px, 14vw, 160px); font-weight: 700; line-height: 0.9; letter-spacing: -2px; animation: fadeUp 0.8s 0.35s both; }
+  .hero-title .hl { color: var(--yellow); display: block; }
+  .hero-tagline { font-size: clamp(14px, 2vw, 18px); font-weight: 300; color: rgba(245,243,238,0.65); margin: 28px auto 0; max-width: 520px; line-height: 1.7; animation: fadeUp 0.8s 0.5s both; }
+  .hero-cta { margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.8s 0.65s both; }
+
+  .btn-primary { padding: 16px 44px; background: var(--yellow); color: var(--black); font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.2s, background 0.2s, box-shadow 0.2s; clip-path: polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%); }
+  .btn-primary:hover { background: #ffd700; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(245,200,0,0.35); }
+  .btn-secondary { padding: 16px 44px; background: transparent; color: var(--white); font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(245,243,238,0.3); cursor: pointer; text-decoration: none; display: inline-block; transition: border-color 0.2s, color 0.2s, transform 0.2s; clip-path: polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%); }
+  .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); transform: translateY(-2px); }
+
+  .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; animation: fadeUp 1s 1s both; cursor: pointer; }
+  .scroll-indicator span { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+  .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--yellow), transparent); animation: scroll-anim 2s 1.5s infinite; }
+  @keyframes scroll-anim { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── STATS ── */
+  .stats-band { background: var(--yellow); padding: 28px 60px; display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; }
+  .stat { text-align: center; color: var(--black); }
+  .stat-num { font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; opacity: 0.7; margin-top: 4px; }
+
+  /* ── SHARED ── */
+  section { padding: 100px 60px; }
+  .section-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--yellow); margin-bottom: 14px; }
+  .section-title { font-family: 'Oswald', sans-serif; font-size: clamp(32px, 5vw, 60px); font-weight: 700; line-height: 1.05; }
+  .section-sub { color: rgba(245,243,238,0.55); font-size: 15px; line-height: 1.7; margin-top: 16px; max-width: 480px; }
+
+  /* ── PRODUCTS ── */
+  #products { background: var(--gray); }
+  .products-header { margin-bottom: 60px; }
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+
+  .product-card { background: var(--black); position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+  .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.6); z-index: 2; }
+
+  .product-photo { width: 100%; aspect-ratio: 3/4; overflow: hidden; position: relative; background: #111; }
+  .product-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; display: block; }
+  .product-card:hover .product-photo img { transform: scale(1.05); }
+  .product-photo-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(13,13,13,0.95) 100%); }
+  .product-photo-badge { position: absolute; top: 16px; left: 16px; font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; padding: 4px 14px; letter-spacing: 1px; background: var(--card-accent, var(--yellow)); color: var(--black); }
+  .product-photo-badge.light { color: #fff; }
+
+  .product-info { padding: 24px 24px 28px; flex: 1; display: flex; flex-direction: column; }
+  .product-tag { display: inline-block; padding: 3px 10px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--card-accent, var(--yellow)); color: var(--card-accent, var(--yellow)); margin-bottom: 12px; }
+  .product-name { font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700; line-height: 1.1; margin-bottom: 5px; }
+  .product-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 16px; }
+  .product-features { list-style: none; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .product-features li { font-size: 12px; color: rgba(245,243,238,0.55); display: flex; align-items: center; gap: 8px; }
+  .product-features li::before { content: ''; width: 14px; height: 1px; background: var(--card-accent, var(--yellow)); flex-shrink: 0; }
+  .product-weight-bar { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
+  .product-weight-num { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; color: rgba(245,243,238,0.12); }
+  .product-class { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; padding: 3px 10px; background: var(--card-accent, var(--yellow)); color: var(--black); }
+  .product-class.light { color: #fff; }
+
+  .card-yellow { --card-accent: #F5C800; }
+  .card-burgu  { --card-accent: #9B4E6B; }
+  .card-red    { --card-accent: #E05252; }
+  .card-slate  { --card-accent: #8899AA; }
+  .card-blue   { --card-accent: #4A90D9; }
+  .card-green  { --card-accent: #4CAF82; }
+  .card-sand   { --card-accent: #C4A96A; }
+
+  /* ── WHY ── */
+  #why { background: var(--black); display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .why-cell { background: var(--gray); padding: 30px 26px; border-left: 2px solid transparent; transition: border-color 0.3s, background 0.3s; }
+  .why-cell:hover { border-color: var(--yellow); background: var(--gray2); }
+  .why-cell-icon { font-size: 28px; margin-bottom: 10px; }
+  .why-cell-title { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .why-cell-text { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── APPLICATIONS ── */
+  #applications { background: var(--gray); }
+  .app-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; margin-top: 60px; }
+  .app-item { background: var(--black); padding: 32px 20px; text-align: center; transition: background 0.3s; }
+  .app-item:hover { background: var(--gray2); }
+  .app-icon { font-size: 32px; margin-bottom: 14px; }
+  .app-title { font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .app-text { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── CONTACT (без формы) ── */
+  #contact { background: var(--black); position: relative; overflow: hidden; }
+  #contact::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(245,200,0,0.06) 0%, transparent 60%); pointer-events: none; }
+  .contact-inner { position: relative; z-index: 1; }
+  .contact-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 60px; }
+  .contact-card { background: var(--gray); padding: 48px 36px; display: flex; flex-direction: column; gap: 16px; transition: background 0.3s; }
+  .contact-card:hover { background: var(--gray2); }
+  .contact-card-icon { font-size: 36px; }
+  .contact-card-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--yellow); }
+  .contact-card-value { font-family: 'Oswald', sans-serif; font-size: clamp(16px, 2vw, 22px); font-weight: 500; color: var(--white); text-decoration: none; line-height: 1.3; transition: color 0.2s; word-break: break-word; }
+  a.contact-card-value:hover { color: var(--yellow); }
+  .contact-cta { margin-top: 60px; display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* ── MAP ── */
+  #map-section { background: var(--gray); padding: 0; display: grid; grid-template-columns: 1fr 1fr; min-height: 420px; }
+  .map-text { padding: 70px 60px; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .map-address { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 500; line-height: 1.4; }
+  .map-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .map-iframe { width: 100%; height: 100%; border: none; min-height: 420px; filter: grayscale(80%) invert(10%); }
+
+  /* ── FOOTER ── */
+  footer { background: #050505; padding: 36px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-top: 1px solid rgba(245,200,0,0.1); }
+  .footer-logo { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--yellow); letter-spacing: 2px; }
+  .footer-logo span { color: rgba(245,243,238,0.35); }
+  .footer-copy { font-size: 12px; color: var(--text-muted); text-align: center; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--yellow); }
+
+  /* ── REVEAL ── */
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .rd1 { transition-delay: 0.1s; }
+  .rd2 { transition-delay: 0.2s; }
+  .rd3 { transition-delay: 0.3s; }
+  .rd4 { transition-delay: 0.4s; }
+
+  /* ══════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════ */
+
+  /* Tablet: 600–900px */
+  @media (max-width: 900px) {
+    nav { padding: 14px 24px; }
+    nav.scrolled { padding: 10px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+
+    section { padding: 70px 24px; }
+    .stats-band { padding: 24px 20px; gap: 32px; }
+
+    /* Products: 2 col on tablet */
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Why: stack */
+    #why { grid-template-columns: 1fr; gap: 48px; padding: 70px 24px; }
+
+    /* Apps: 3 col */
+    .app-row { grid-template-columns: repeat(3, 1fr); }
+
+    /* Contact: single col */
+    .contact-cards { grid-template-columns: 1fr; gap: 2px; }
+    .contact-card { padding: 32px 24px; flex-direction: row; align-items: center; gap: 20px; }
+    .contact-card-icon { font-size: 28px; flex-shrink: 0; }
+
+    /* Map: stack */
+    #map-section { grid-template-columns: 1fr; }
+    .map-text { padding: 50px 24px; }
+    .map-iframe { min-height: 300px; }
+
+    footer { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
+  }
+
+  /* Mobile: ≤600px */
+  @media (max-width: 600px) {
+    section { padding: 56px 16px; }
+    .stats-band { padding: 20px 16px; gap: 24px; }
+    .stat-num { font-size: 32px; }
+
+    /* Products: 1 col */
+    .products-grid { grid-template-columns: 1fr; }
+    .product-photo { aspect-ratio: 4/3; }
+
+    /* Why grid: 1 col */
+    .why-grid { grid-template-columns: 1fr; }
+
+    /* Apps: 2 col */
+    .app-row { grid-template-columns: repeat(2, 1fr); }
+
+    /* Contact cards: vertical */
+    .contact-cards { grid-template-columns: 1fr; }
+    .contact-card { flex-direction: column; align-items: flex-start; padding: 28px 20px; }
+    .contact-cta { flex-direction: column; }
+    .contact-cta .btn-primary,
+    .contact-cta .btn-secondary { text-align: center; width: 100%; clip-path: none; padding: 16px; }
+
+    .map-text { padding: 40px 16px; }
+    .btn-secondary { clip-path: none; }
+
+    footer { padding: 28px 16px; gap: 12px; }
+    .footer-links { flex-wrap: wrap; gap: 16px; }
+
+    .hero-cta .btn-primary,
+    .hero-cta .btn-secondary { width: 100%; text-align: center; clip-path: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">BIN<span> GÖL</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Продукция</a></li>   
+    <li><a href="#applications">Применение</a></li>
+    <li><a href="#contact">Контакты</a></li>
+    <li><a href="#why">О нас</a></li>
+  </ul>
+  <a href="tel:89288033766" class="nav-phone" style="display:none;" id="nav-phone-desktop">+7 928 803-37-66</a>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#products" onclick="closeMenu()">Продукция</a>
+  <a href="#why" onclick="closeMenu()">О нас</a>
+  <a href="#applications" onclick="closeMenu()">Применение</a>
+  <a href="#contact" onclick="closeMenu()">Контакты</a>
+  <a href="tel:89288033766" class="mob-phone">+7 928 803-37-66</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-stripe"></div>
+  <div class="particles" id="particles"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Сухие строительные смеси · г. Каспийск</p>
+    <h1 class="hero-title">BIN<span >GÖL</span></h1>
+    <p class="hero-tagline">Профессиональные строительные смеси — для плитки, штукатурки, фасадов и фундаментов.</p>
+    <div class="hero-cta">
+      <a href="#products" class="btn-primary">Смотреть продукцию</a>
+      <a href="#contact" class="btn-secondary">Связаться</a>
+    </div>
+  </div>
+  <div class="scroll-indicator" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+    <span>Далее</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-band">
+  <div class="stat"><div class="stat-num">7+</div><div class="stat-label">видов продукции</div></div>
+  <div class="stat"><div class="stat-num">C2</div><div class="stat-label">класс клея</div></div>
+  <div class="stat"><div class="stat-num">25–30</div><div class="stat-label">кг в мешке</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">стандарт качества</div></div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="products-header">
+    <p class="section-eyebrow reveal">Продукция</p>
+    <h2 class="section-title reveal rd1">Наши смеси</h2>
+    <p class="section-sub reveal rd2">Каждый продукт разработан для конкретной задачи — от укладки керамогранита до машинной штукатурки фасадов.</p>
+  </div>
+
+  <div class="products-grid">
+
+    <div class="product-card card-yellow reveal">
+      <div class="product-photo">
+        <img src="granit.jpg" alt="BIN GÖL GRANIT — плиточный клей">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge">C2</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Плиточный клей</span>
+        <h3 class="product-name">GRANIT</h3>
+        <p class="product-sub">25 кг</p>
+        <ul class="product-features">
+          <li>Для керамогранита и натурального камня</li>
+          <li>Широкоформатная плитка</li>
+          <li>Облицовка цоколя · Тёплые полы</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">25 кг</span>
+          <span class="product-class">Класс C2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-slate reveal rd1">
+      <div class="product-photo">
+        <img src="fasadnaya.jpg" alt="BIN GÖL Фасадная штукатурка">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#8899AA;">Фасад</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Штукатурка цементная</span>
+        <h3 class="product-name">ФАСАДНАЯ</h3>
+        <p class="product-sub">25 кг</p>
+        <ul class="product-features">
+          <li>Ручного и машинного нанесения</li>
+          <li>Внутренние и наружные работы</li>
+          <li>Оштукатуривание фасадов</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">25 кг</span>
+          <span class="product-class light" style="background:#8899AA;color:#fff;">Фасад</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-burgu reveal rd2">
+      <div class="product-photo">
+        <img src="usilenny.jpg" alt="BIN GÖL Усиленный">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#9B4E6B;">2С</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Плиточный клей</span>
+        <h3 class="product-name">УСИЛЕННЫЙ</h3>
+        <p class="product-sub">25 кг</p>
+        <ul class="product-features">
+          <li>Класс 2С — внутри и снаружи</li>
+          <li>Высокая прочность и адгезия</li>
+          <li>Морозостойкий · Влагостойкий</li>
+          <li>Тёплые полы</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">25 кг</span>
+          <span class="product-class light" style="background:#9B4E6B;color:#fff;">Класс 2С</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-red reveal">
+      <div class="product-photo">
+        <img src="standart.jpg" alt="BIN GÖL Стандарт">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#E05252;">С2</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Плиточный клей</span>
+        <h3 class="product-name">СТАНДАРТ</h3>
+        <p class="product-sub">25 кг</p>
+        <ul class="product-features">
+          <li>Класс клея С2</li>
+          <li>Для внутренних работ</li>
+          <li>Высокая прочность и адгезия</li>
+          <li>Устойчив к сползанию</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">25 кг</span>
+          <span class="product-class light" style="background:#E05252;color:#fff;">Класс С2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-blue reveal rd1">
+      <div class="product-photo">
+        <img src="mp9.jpg" alt="BIN GÖL MP9">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#4A90D9;">MP 9</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Штукатурка гипсовая</span>
+        <h3 class="product-name">MP 9</h3>
+        <p class="product-sub">Машинного нанесения · 30 кг</p>
+        <ul class="product-features">
+          <li>Стены и потолки</li>
+          <li>Внутренние работы</li>
+          <li>ГОСТ Р 58279-2018</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">30 кг</span>
+          <span class="product-class light" style="background:#4A90D9;color:#fff;">Гипс</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-green reveal rd2">
+      <div class="product-photo">
+        <img src="optima.jpg" alt="BIN GÖL Оптима">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#4CAF82;">Оптима</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Штукатурка гипсовая</span>
+        <h3 class="product-name">ОПТИМА</h3>
+        <p class="product-sub">Ручного нанесения · 30 кг</p>
+        <ul class="product-features">
+          <li>Стены и потолки</li>
+          <li>Внутренние работы</li>
+          <li>ГОСТ Р 58279-2018</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">30 кг</span>
+          <span class="product-class light" style="background:#4CAF82;color:#fff;">Гипс</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card card-sand reveal rd1" style="grid-column: 1 / -1; max-width: 400px;">
+      <div class="product-photo" style="aspect-ratio:16/9;">
+        <img src="leskobeton.jpg" alt="BIN GÖL Лескобетон M300" style="object-position:center 30%;">
+        <div class="product-photo-overlay"></div>
+        <div class="product-photo-badge light" style="background:#C4A96A;">M300</div>
+      </div>
+      <div class="product-info">
+        <span class="product-tag">Сухая смесь</span>
+        <h3 class="product-name">ПЕСКОБЕТОН</h3>
+        <p class="product-sub">M300 · 25 кг</p>
+        <ul class="product-features">
+          <li>Устройство стяжек и кладки</li>
+          <li>Оштукатуривание стен</li>
+          <li>Выравнивание оснований</li>
+          <li>Ремонт бетонных конструкций</li>
+        </ul>
+        <div class="product-weight-bar">
+          <span class="product-weight-num">25 кг</span>
+          <span class="product-class light" style="background:#C4A96A;color:#fff;">M300</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="reveal">
+    <div class="why-grid">
+      <div class="why-cell"><div class="why-cell-icon">🏗️</div><div class="why-cell-title">Профессиональный состав</div><div class="why-cell-text">Рецептуры разработаны под российские климатические условия.</div></div>
+      <div class="why-cell"><div class="why-cell-icon">❄️</div><div class="why-cell-title">Морозостойкость</div><div class="why-cell-text">Многократное замораживание без потери свойств.</div></div>
+      <div class="why-cell"><div class="why-cell-icon">💧</div><div class="why-cell-title">Влагостойкость</div><div class="why-cell-text">Высокая водостойкость для фасадов и влажных помещений.</div></div>
+      <div class="why-cell"><div class="why-cell-icon">🔗</div><div class="why-cell-title">Высокая адгезия</div><div class="why-cell-text">Надёжное сцепление с бетоном, кирпичом, ГКЛ.</div></div>
+    </div>
+  </div>
+  <div>
+    <p class="section-eyebrow reveal">Почему BIN GÖL</p>
+    <h2 class="section-title reveal rd1">Качество,<br>проверенное<br>стройкой</h2>
+    <p class="section-sub reveal rd2">Бренд BIN GÖL выпускает сухие строительные смеси по турецким технологиям на российском сырье. Производство — г. Каспийск. Весь ассортимент соответствует ГОСТ и имеет сертификат качества.</p>
+    <div style="margin-top:32px;display:flex;flex-direction:column;gap:14px;" class="reveal rd3">
+      <div style="display:flex;align-items:center;gap:14px;"><div style="width:36px;height:1px;background:var(--yellow);flex-shrink:0;"></div><span style="font-size:13px;color:rgba(245,243,238,0.6);">Сделано в России</span></div>
+      <div style="display:flex;align-items:center;gap:14px;"><div style="width:36px;height:1px;background:var(--yellow);flex-shrink:0;"></div><span style="font-size:13px;color:rgba(245,243,238,0.6);">Турецкие технологии Çimento iklim</span></div>
+      <div style="display:flex;align-items:center;gap:14px;"><div style="width:36px;height:1px;background:var(--yellow);flex-shrink:0;"></div><span style="font-size:13px;color:rgba(245,243,238,0.6);">Стандарт качества на каждом мешке</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATIONS -->
+<section id="applications">
+  <p class="section-eyebrow reveal">Применение</p>
+  <h2 class="section-title reveal rd1">Где используется</h2>
+  <div class="app-row">
+    <div class="app-item reveal"><div class="app-icon">🏠</div><div class="app-title">Жилые помещения</div><div class="app-text">Укладка плитки, выравнивание стен и потолков</div></div>
+    <div class="app-item reveal rd1"><div class="app-icon">🏢</div><div class="app-title">Коммерция</div><div class="app-text">ТЦ, офисы, гостиницы — высокопрочные решения</div></div>
+    <div class="app-item reveal rd2"><div class="app-icon">🏗️</div><div class="app-title">Фасады</div><div class="app-text">Наружное оштукатуривание, облицовка цоколей</div></div>
+    <div class="app-item reveal rd3"><div class="app-icon">🔥</div><div class="app-title">Тёплые полы</div><div class="app-text">Клеи для систем напольного отопления</div></div>
+    <div class="app-item reveal rd4"><div class="app-icon">🛁</div><div class="app-title">Влажные зоны</div><div class="app-text">Ванные комнаты, бассейны</div></div>
+  </div>
+</section>
+
+<!-- MAP -->
+<div id="map-section">
+  <div class="map-text">
+    <p class="section-eyebrow reveal">Производство</p>
+    <div class="map-address reveal rd1">г. Каспийск,<br>ул. Байрамова, 43</div>
+    <p class="map-sub reveal rd2">Дагестан, Россия. Посетите наш склад или свяжитесь для оптовых заказов.</p>
+    <a href="https://maps.google.com/?q=Каспийск+Байрамова+43" target="_blank" class="btn-secondary reveal rd3" style="margin-top:20px;padding:12px 32px;align-self:flex-start;">Открыть на карте</a>
+  </div>
+  <iframe class="map-iframe" src="https://www.openstreetmap.org/export/embed.html?bbox=67.8,42.85,67.95,42.92&layer=mapnik&marker=42.886,67.875" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-eyebrow reveal">Контакты</p>
+    <h2 class="section-title reveal rd1">Свяжитесь с нами</h2>
+    <p class="section-sub reveal rd2">Готовы ответить на вопросы, принять заказ или договориться об оптовых поставках.</p>
+
+    <div class="contact-cards">
+      <div class="contact-card reveal rd1">
+        <div class="contact-card-icon">📞</div>
+        <div class="contact-card-label">Телефон</div>
+        <a href="tel:89288033766" class="contact-card-value">+7 928 803-37-66</a>
+      </div>
+      <div class="contact-card reveal rd2">
+        <div class="contact-card-icon">✉️</div>
+        <div class="contact-card-label">Почта</div>
+        <a href="mailto:bingolsss05@mail.ru" class="contact-card-value">bingolsss05@mail.ru</a>
+      </div>
+      <div class="contact-card reveal rd3">
+        <div class="contact-card-icon">📍</div>
+        <div class="contact-card-label">Адрес производства</div>
+        <span class="contact-card-value">г. Каспийск, ул. Байрамова, 43</span>
+      </div>
+    </div>
+
+    <div class="contact-cta reveal rd2">
+      <a href="tel:89288033766" class="btn-primary">Позвонить сейчас</a>
+      <a href="mailto:bingolsss05@mail.ru" class="btn-secondary">Написать на почту</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">BIN <span>GÖL</span></div>
+  <div class="footer-copy">© 2012 BIN GÖL · Сухие строительные смеси · г. Каспийск</div>
+  <div class="footer-links">
+    <a href="tel:89288033766">+7 928 803-37-66</a>
+    <a href="mailto:bingolsss05@mail.ru">Email</a>
+  </div>
+</footer>
+
+<script>
+// Particles
+const pc = document.getElementById('particles');
+for (let i = 0; i < 28; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const s = 1 + Math.random() * 3;
+  p.style.cssText = `left:${Math.random()*100}%;width:${s}px;height:${s}px;--dur:${6+Math.random()*10}s;--delay:${Math.random()*10}s;--dx:${(Math.random()-.5)*120}px;`;
+  pc.appendChild(p);
+}
+
+// Nav scroll + phone show
+const nav = document.getElementById('nav');
+const navPhone = document.getElementById('nav-phone-desktop');
+function onScroll() {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}
+window.addEventListener('scroll', onScroll);
+
+// Show phone on desktop
+function checkPhone() {
+  navPhone.style.display = window.innerWidth > 900 ? 'block' : 'none';
+}
+checkPhone();
+window.addEventListener('resize', checkPhone);
+
+// Hamburger menu
+function toggleMenu() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobile-menu').classList.toggle('open');
+  document.body.style.overflow = document.getElementById('mobile-menu').classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
